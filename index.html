@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathfinding Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="main-layout">
+            <div class="left-section">
+                <div class="tabs-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="source-tab" type="button">Source Code</button>
+                        <button class="tab-btn" data-tab="settings-tab" type="button">Settings</button>
+                    </div>
+
+                    <div class="tab-content">
+                        <div id="source-tab" class="tab-pane active">
+                            <textarea id="algo-input" class="code-editor"
+                                      placeholder="Enter your pathfinding algorithm here..."
+                                      aria-label="Algorithm source code editor"></textarea>
+                        </div>
+
+                        <div id="settings-tab" class="tab-pane">
+                            <div class="settings-content">
+                                <div class="setting-group">
+                                    <label class="setting-label">Grid Size</label>
+                                    <div class="grid-size-row">
+                                        <div class="input-group">
+                                            <label for="rows-input" class="input-label">Rows</label>
+                                            <input type="number" id="rows-input" value="20" min="5" max="50"
+                                                   class="input-field" aria-label="Number of rows">
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="cols-input" class="input-label">Columns</label>
+                                            <input type="number" id="cols-input" value="20" min="5" max="50"
+                                                   class="input-field" aria-label="Number of columns">
+                                        </div>
+                                        <button id="resize-btn" class="btn-apply" type="button">Apply Size</button>
+                                    </div>
+                                </div>
+
+                                <div class="setting-group">
+                                    <label for="map-input" class="setting-label">Import/Export Map</label>
+                                    <div class="map-section">
+                                        <p class="setting-description">
+                                            Import format: <code>.</code> = empty, <code>#</code> = wall, <code>O</code> = destination
+                                        </p>
+                                        <textarea id="map-input" class="map-input" rows="6"
+                                                  placeholder="Example:&#10;...##...&#10;.O.##...&#10;...##...&#10;........"></textarea>
+                                        <div class="map-actions">
+                                            <button id="render-map-btn" class="btn-action btn-primary" type="button">Import Map</button>
+                                            <button id="export-map-btn" class="btn-action btn-secondary" type="button">Export Current</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="setting-group">
+                                    <label class="setting-label">Quick Tools</label>
+                                    <div class="tools-grid">
+                                        <button id="generate-maze-btn" class="tool-btn" type="button">
+                                            <div class="tool-icon">🏗️</div>
+                                            <div class="tool-text">Generate Maze</div>
+                                        </button>
+                                        <button id="clear-walls-btn" class="tool-btn" type="button">
+                                            <div class="tool-icon">🧹</div>
+                                            <div class="tool-text">Clear Walls</div>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="setting-group">
+                                    <label class="setting-label">Legend</label>
+                                    <div class="legend-grid">
+                                        <div class="legend-item">
+                                            <div class="legend-circle frog1-demo"></div>
+                                            <span>Frog 1 (Start)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-circle frog2-demo"></div>
+                                            <span>Frog 2 (Start)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-circle destination-demo"></div>
+                                            <span>Destination</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-square wall-demo"></div>
+                                            <span>Wall</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-square visited-demo"></div>
+                                            <span>Visited</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-square current-demo"></div>
+                                            <span>Current</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-square exploring-demo"></div>
+                                            <span>Exploring</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-square path-demo"></div>
+                                            <span>Final Path</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-section">
+                <div class="visualization-panel">
+                    <header class="panel-header">
+                        <div class="controls">
+                            <div class="control-group">
+                                <button id="start-btn" class="btn btn-primary" type="button" aria-label="Run pathfinding algorithm">
+                                    Run <kbd>Enter</kbd>
+                                </button>
+                                <button id="step-btn" class="btn btn-secondary" type="button" aria-label="Step through algorithm">
+                                    Step <kbd>Shift+Enter</kbd>
+                                </button>
+                                <button id="next-step-btn" class="btn btn-success hidden" type="button" aria-label="Next step">
+                                    Next <kbd>Space</kbd>
+                                </button>
+                                <button id="stop-btn" class="btn btn-danger hidden" type="button" aria-label="Stop algorithm">
+                                    Stop <kbd>Esc</kbd>
+                                </button>
+                                <button id="replay-btn" class="btn btn-info hidden" type="button" aria-label="Replay path animation">
+                                    Replay
+                                </button>
+                            </div>
+
+                            <div class="replay-controls hidden" id="replay-controls">
+                                <div class="replay-step-controls">
+                                    <button id="step-back-btn" class="btn btn-xs btn-secondary" type="button" aria-label="Step backward">
+                                        ⏮
+                                    </button>
+                                    <button id="play-pause-btn" class="btn btn-xs btn-primary" type="button" aria-label="Play/Pause">
+                                        ▶️
+                                    </button>
+                                    <button id="step-forward-btn" class="btn btn-xs btn-secondary" type="button" aria-label="Step forward">
+                                        ⏭
+                                    </button>
+                                    <button id="exit-replay-btn" class="btn btn-xs btn-danger-outline" type="button" aria-label="Exit replay mode">
+                                        ✕
+                                    </button>
+                                </div>
+                                <div class="replay-progress">
+                                    <input type="range" id="progress-slider" class="progress-slider" min="0" max="100" value="0" />
+                                    <div class="step-info">
+                                        <span id="current-step">0</span> / <span id="total-steps">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <button id="random-btn" class="btn btn-neutral" type="button" aria-label="Generate random walls">
+                                    Random <kbd>W</kbd>
+                                </button>
+                                <button id="reset-btn" class="btn btn-danger-outline" type="button" aria-label="Reset grid">
+                                    Reset <kbd>R</kbd>
+                                </button>
+                                <button id="help-btn" class="btn btn-info-outline" type="button" aria-label="Show code guide">
+                                    Guide <kbd>H</kbd>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="status" class="status-text">Ready</div>
+                    </header>
+
+                    <div class="visualization-content">
+                        <div id="grid-container" class="grid" role="grid" aria-label="Pathfinding grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
