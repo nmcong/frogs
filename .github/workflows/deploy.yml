@@ -1,0 +1,71 @@
+name: Deploy to VPS
+
+# Kích hoạt workflow khi push hoặc merge vào branch main
+on:
+  push:
+    branches:
+      - main
+      - master
+  # Cho phép chạy manual từ GitHub UI
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🚀 Checkout code
+        uses: actions/checkout@v3
+        
+      - name: 📦 Deploy to VPS via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            echo "🔄 Starting deployment..."
+            
+            # Tạo thư mục nếu chưa có
+            mkdir -p ${{ secrets.DEPLOY_PATH }}
+            
+            # Di chuyển đến thư mục deploy
+            cd ${{ secrets.DEPLOY_PATH }}
+            
+            # Nếu đã có Git repo
+            if [ -d ".git" ]; then
+              echo "📥 Pulling latest changes..."
+              git pull origin main || git pull origin master
+            else
+              echo "📥 Cloning repository..."
+              cd ..
+              rm -rf frogs
+              git clone ${{ secrets.REPO_URL }} frogs
+              cd frogs
+            fi
+            
+            # Phân quyền
+            echo "🔐 Setting permissions..."
+            sudo chown -R www-data:www-data ${{ secrets.DEPLOY_PATH }} || chown -R ${{ secrets.VPS_USERNAME }}:${{ secrets.VPS_USERNAME }} ${{ secrets.DEPLOY_PATH }}
+            sudo chmod -R 755 ${{ secrets.DEPLOY_PATH }}
+            
+            # Test và reload Nginx
+            echo "🔄 Reloading Nginx..."
+            sudo nginx -t && sudo systemctl reload nginx || echo "⚠️ Nginx reload skipped"
+            
+            echo "✅ Deployment completed successfully!"
+            
+      - name: ✅ Deployment Status
+        if: success()
+        run: |
+          echo "🎉 Deployment to VPS completed successfully!"
+          echo "🌐 Visit your website at: http://${{ secrets.VPS_HOST }}"
+          
+      - name: ❌ Deployment Failed
+        if: failure()
+        run: |
+          echo "💥 Deployment failed! Check the logs above for details."
+          exit 1
+

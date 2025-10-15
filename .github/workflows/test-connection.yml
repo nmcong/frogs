@@ -1,0 +1,33 @@
+name: Test VPS Connection
+
+# Workflow đơn giản để test SSH connection
+# Dùng để verify secrets đã setup đúng chưa
+
+on:
+  workflow_dispatch:  # Chỉ chạy manual
+
+jobs:
+  test:
+    name: Test SSH Connection
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🔌 Test SSH Connection
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            echo "✅ SSH Connection successful!"
+            echo "📍 Current directory: $(pwd)"
+            echo "👤 Current user: $(whoami)"
+            echo "🖥️  Hostname: $(hostname)"
+            echo "💾 Disk usage:"
+            df -h /
+            echo "🐧 OS Info:"
+            cat /etc/os-release | grep PRETTY_NAME
+            echo ""
+            echo "🎉 All checks passed! You can deploy now."
+

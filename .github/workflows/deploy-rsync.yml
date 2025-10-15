@@ -1,0 +1,67 @@
+name: Deploy to VPS (Rsync)
+
+# Workflow này dùng rsync thay vì git
+# Phù hợp nếu không muốn public repo hoặc cần deploy selective files
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy via Rsync
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🚀 Checkout code
+        uses: actions/checkout@v3
+        
+      - name: 📝 Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+          
+      - name: 📦 Deploy files via Rsync
+        run: |
+          rsync -avz --delete \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'node_modules' \
+            --exclude '.DS_Store' \
+            --exclude '.deploy-config' \
+            --exclude 'deploy.sh' \
+            --exclude 'setup-vps.sh' \
+            --exclude '*.md' \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.VPS_PORT }}" \
+            ./ ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:${{ secrets.DEPLOY_PATH }}/
+            
+      - name: 🔧 Post-deployment tasks
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            echo "🔐 Setting permissions..."
+            sudo chown -R www-data:www-data ${{ secrets.DEPLOY_PATH }}
+            sudo chmod -R 755 ${{ secrets.DEPLOY_PATH }}
+            
+            echo "🔄 Reloading Nginx..."
+            sudo nginx -t && sudo systemctl reload nginx
+            
+            echo "✅ Deployment completed!"
+            
+      - name: ✅ Success Notification
+        if: success()
+        run: echo "🎉 Deployment successful!"
+        
+      - name: ❌ Failure Notification
+        if: failure()
+        run: echo "💥 Deployment failed!"
+
