@@ -1,10 +1,35 @@
 # Deploy config (chứa thông tin nhạy cảm)
 .deploy-config
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# SSH Keys (precaution)
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+*.ppk
+
+# Database files
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+
+# Sensitive configs
+config.local.*
+secrets.json
+credentials.json
+auth.json
+
 # macOS
 .DS_Store
 .AppleDouble
 .LSOverride
+._*
 
 # IDE
 .idea/
@@ -12,15 +37,38 @@
 *.swp
 *.swo
 *~
+*.sublime-project
+*.sublime-workspace
 
 # Logs
 *.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Backup files
 *.backup
 *.bak
+*~
 
 # Temporary files
 *.tmp
 *.temp
+tmp/
+temp/
+
+# Node modules (if later added)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build outputs (if later added)
+dist/
+build/
+.cache/
+
+# OS specific
+Thumbs.db
+Desktop.ini
 

@@ -86,7 +86,9 @@ return {
 
 ## 📦 Deploy Lên VPS
 
-> **📚 [Xem tất cả tài liệu deployment](docs/DEPLOYMENT_INDEX.md)** | **🔄 [So sánh các phương pháp](docs/DEPLOYMENT_COMPARISON.md)**
+> **📚 [Xem tất cả tài liệu](docs/DEPLOYMENT_INDEX.md)** | **🔄 [So sánh phương pháp](docs/DEPLOYMENT_COMPARISON.md)** | **🔧 [Troubleshooting](docs/TROUBLESHOOTING.md)**
+> 
+> **🌐 Domain:** [Setup frogs.noteflix.tech](docs/SUBDOMAIN_SETUP.md)
 
 ### Cách 1: GitHub Actions - Auto Deploy 🤖 (Khuyến nghị nhất)
 

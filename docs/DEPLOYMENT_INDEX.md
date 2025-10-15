@@ -78,6 +78,51 @@ Chào mừng đến với hệ thống tài liệu deployment! Chọn tài liệ
 
 ---
 
+## 🌐 Domain & Subdomain Setup
+
+### 6. [SUBDOMAIN_SETUP.md](SUBDOMAIN_SETUP.md) 🌐
+**Setup subdomain frogs.noteflix.tech**
+- DNS configuration
+- Nginx setup cho subdomain
+- SSL installation
+- Complete step-by-step
+- **Dành cho:** Setup domain cụ thể
+- **Thời gian:** 30 phút
+
+### 7. [DNS_SETUP_GUIDE.md](DNS_SETUP_GUIDE.md) 📡
+**Hướng dẫn cấu hình DNS chi tiết**
+- A Record setup
+- DNS verification
+- Troubleshooting DNS
+- Multiple providers guide
+- **Dành cho:** Cấu hình DNS
+- **Thời gian:** 15 phút
+
+### 8. [DOMAIN_CHECKLIST.md](DOMAIN_CHECKLIST.md) ✅
+**Checklist đầy đủ setup domain**
+- 5 phases từ DNS đến deploy
+- Progress tracker
+- Verification steps
+- **Dành cho:** Follow từng bước
+- **Thời gian:** Track progress
+
+---
+
+## 🔧 Troubleshooting
+
+### 9. [TROUBLESHOOTING.md](TROUBLESHOOTING.md) 🆘
+**Giải quyết tất cả lỗi thường gặp**
+- SSH errors (host key, permission denied, timeout...)
+- GitHub Actions issues
+- Nginx problems
+- SSL/HTTPS issues
+- Deploy script errors
+- Quick debug commands
+- **Dành cho:** Khi gặp lỗi BẤT KỲ
+- **Thời gian:** Tìm lỗi trong 1-2 phút
+
+---
+
 ## 📂 Cấu Trúc Thư Mục Documentation
 
 ```
@@ -107,6 +152,15 @@ Chào mừng đến với hệ thống tài liệu deployment! Chọn tài liệ
 ├── 📚 Manual Deploy
 │   ├── DEPLOYMENT_GUIDE.md              # Full guide
 │   └── nginx-config-template.conf       # Nginx template
+│
+├── 🌐 Domain Setup
+│   ├── SUBDOMAIN_SETUP.md               # Setup frogs.noteflix.tech
+│   ├── DNS_SETUP_GUIDE.md               # DNS configuration
+│   └── DOMAIN_CHECKLIST.md              # Complete checklist
+│
+├── 🔧 Troubleshooting
+│   ├── TROUBLESHOOTING.md               # Giải quyết mọi lỗi
+│   └── SSH_HOST_KEY_FIX.md              # SSH host key fix
 │
 └── 📁 Website Files
     ├── index.html

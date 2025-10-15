@@ -86,7 +86,9 @@ read -p "Bạn có domain không? (y/n): " -n 1 -r
 echo ""
 
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    read -p "Nhập domain của bạn (vd: example.com): " DOMAIN
+    read -p "Nhập domain của bạn (vd: frogs.noteflix.tech): " DOMAIN
+    DOMAIN=${DOMAIN:-frogs.noteflix.tech}
+    
     read -p "Có subdomain www không? (y/n): " -n 1 -r
     echo ""
     
@@ -127,6 +129,9 @@ EOF
     print_success "Đã tạo Nginx config với domain: $DOMAIN"
     
     # Hỏi về SSL
+    echo ""
+    echo "⚠️  Lưu ý: Trước khi cài SSL, đảm bảo DNS đã trỏ về VPS này!"
+    echo "   Kiểm tra: ping $DOMAIN"
     echo ""
     read -p "Bạn có muốn cài SSL (HTTPS) ngay bây giờ không? (y/n): " -n 1 -r
     echo ""
